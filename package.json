@@ -1,19 +1,10 @@
 {
-  "name": "zalo-macos",
-  "version": "1.0.0",
-  "description": "",
+  "name": "zalo-linux",
+  "version": "26.5.20",
+  "description": "Zalo Desktop - macOS port for Linux",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
-  "dependencies": {
-    "sqlite3": "^6.0.1"
-  },
   "devDependencies": {
-    "@electron/rebuild": "^4.0.4",
     "electron": "^22.3.27"
   }
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Build Zalo Linux (macOS port)
-# Requires: 7z, node/npm, python3-pillow (optional)
+# Requires: 7z, node/npm
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,6 +11,11 @@ APP_DIR="$SCRIPT_DIR/zalo-linux"
 PATCHES_DIR="$SCRIPT_DIR/patches"
 
 echo "=== Zalo macOS → Linux Port Builder ==="
+
+# Check dependencies
+for cmd in 7z node npm; do
+    command -v "$cmd" &>/dev/null || { echo "ERROR: '$cmd' not found. Install it first."; exit 1; }
+done
 
 # Step 1: Download DMG
 if [ ! -f "$DMG_FILE" ]; then
@@ -58,7 +63,6 @@ cp "$PATCHES_DIR/native/nativelibs/v8-profiles/index.js" \
 cp "$PATCHES_DIR/native/nativelibs/zwalker/index.js" \
    "$UNPACKED/native/nativelibs/zwalker/index.js"
 
-# Linux sqlite3 binary
 mkdir -p "$UNPACKED/native/nativelibs/sqlite3/binding/napi-v6-linux-x64"
 cp "$PATCHES_DIR/native/nativelibs/sqlite3/binding/napi-v6-linux-x64/node_sqlite3.node" \
    "$UNPACKED/native/nativelibs/sqlite3/binding/napi-v6-linux-x64/"
@@ -68,8 +72,15 @@ echo "  Patches applied."
 # Step 5: Install Electron 22
 echo "[5/5] Installing Electron 22..."
 cd "$SCRIPT_DIR"
-npm install 2>/dev/null
+npm install
+if [ ! -f "$SCRIPT_DIR/node_modules/.bin/electron" ]; then
+    echo "ERROR: Electron install failed."
+    echo "Try manually: cd \"$SCRIPT_DIR\" && npm install"
+    exit 1
+fi
 
 echo ""
 echo "=== Build complete ==="
-echo "Run: $SCRIPT_DIR/run-zalo.sh"
+echo "Electron: $("$SCRIPT_DIR/node_modules/.bin/electron" --version --no-sandbox 2>/dev/null)"
+echo ""
+echo "Run Zalo: $SCRIPT_DIR/run-zalo.sh"
